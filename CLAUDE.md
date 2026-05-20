@@ -55,5 +55,5 @@ src/
 | 1 | Scaffold + settings dialog ✓ |
 | 2 | Basic multi-turn chat (no streaming) |
 | 3 | Streaming + stop/regenerate/edit |
-| 4 | Sidebar + Dexie persistence |
+| 4 | Sidebar + Dexie persistence ✓ |
 | 5 | Image input, toasts, markdown export |
