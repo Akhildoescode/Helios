@@ -69,8 +69,19 @@ function UserBubble({ message, onEdit }: Props) {
           <Pencil className="h-3.5 w-3.5" />
         </Button>
       )}
-      <div className="max-w-[75%] rounded-2xl bg-primary px-4 py-2.5 text-primary-foreground text-sm whitespace-pre-wrap break-words">
-        {message.text}
+      <div className="max-w-[75%] flex flex-col items-end gap-2">
+        {message.imageData && (
+          <img
+            src={`data:${message.imageMimeType ?? 'image/jpeg'};base64,${message.imageData}`}
+            alt="Attached image"
+            className="max-h-60 max-w-full rounded-2xl object-contain"
+          />
+        )}
+        {message.text.trim() && (
+          <div className="rounded-2xl bg-primary px-4 py-2.5 text-primary-foreground text-sm whitespace-pre-wrap break-words">
+            {message.text}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -12,6 +12,8 @@ export interface DbMessage {
   conversationId: string
   role: 'user' | 'model'
   text: string
+  imageData?: string
+  imageMimeType?: string
   createdAt: number
 }
 

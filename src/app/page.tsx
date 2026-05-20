@@ -1,18 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { PanelLeft } from 'lucide-react'
+import { PanelLeft, Download } from 'lucide-react'
 import { db } from '@/lib/db'
 import { Sidebar } from '@/components/sidebar/sidebar'
 import { SettingsDialog } from '@/components/settings-dialog'
-import { Chat } from '@/components/chat/chat'
+import { Chat, type ChatHandle } from '@/components/chat/chat'
 import { Button } from '@/components/ui/button'
 
 export default function Home() {
   const [activeConvId, setActiveConvId] = useState<string | null>(null)
   const [chatKey, setChatKey] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const chatRef = useRef<ChatHandle>(null)
 
   const conversations = useLiveQuery(
     () => db.conversations.orderBy('updatedAt').reverse().toArray(),
@@ -64,13 +65,24 @@ export default function Home() {
           <span className="flex-1 truncate font-semibold tracking-tight text-sm">
             {activeTitle ?? 'Helios'}
           </span>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-7 w-7"
+            onClick={() => chatRef.current?.exportMarkdown()}
+            aria-label="Export conversation"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
           <SettingsDialog />
         </header>
 
         <Chat
+          ref={chatRef}
           key={chatKey}
           conversationId={activeConvId}
           onConversationCreated={setActiveConvId}
+          title={activeTitle}
         />
       </div>
     </div>

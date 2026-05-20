@@ -15,6 +15,8 @@ interface GenerateArgs {
   maxTokens: number
   history: ChatTurn[]
   userText: string
+  imageData?: string
+  imageMimeType?: string
 }
 
 function buildChat(args: GenerateArgs) {
@@ -31,9 +33,18 @@ function buildChat(args: GenerateArgs) {
   })
 }
 
+function buildMessage(args: GenerateArgs) {
+  if (!args.imageData || !args.imageMimeType) return args.userText
+  const parts: object[] = [
+    { inlineData: { mimeType: args.imageMimeType, data: args.imageData } },
+  ]
+  if (args.userText.trim()) parts.push({ text: args.userText })
+  return parts
+}
+
 export async function generateReply(args: GenerateArgs): Promise<string> {
   const chat = buildChat(args)
-  const response = await chat.sendMessage({ message: args.userText })
+  const response = await chat.sendMessage({ message: buildMessage(args) })
   return response.text ?? ''
 }
 
@@ -42,7 +53,7 @@ export async function* generateReplyStream(
   signal?: AbortSignal,
 ): AsyncGenerator<string> {
   const chat = buildChat(args)
-  const stream = await chat.sendMessageStream({ message: args.userText })
+  const stream = await chat.sendMessageStream({ message: buildMessage(args) })
   for await (const chunk of stream) {
     if (signal?.aborted) break
     yield chunk.text ?? ''
